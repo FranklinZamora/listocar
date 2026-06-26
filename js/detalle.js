@@ -16,7 +16,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 // ID del auto desde la URL: detalle.html?id=FIREBASE_DOC_ID
 const params = new URLSearchParams(location.search);
 const carId  = params.get("id");
-if(!carId) location.href = "inicio.html";
+if(!carId) location.href = "index.html";
 
 function getFotos(car){
   if(car.fotos && car.fotos.length) return car.fotos;
@@ -94,7 +94,7 @@ function renderDetail(car){
           <a class="btn" href="${waLink(waMsg)}" target="_blank" rel="noopener">
             ${WA_ICON} Rentar por WhatsApp
           </a>
-          <a class="btn ghost" href="inicio.html#catalogo">
+          <a class="btn ghost" href="index.html#catalogo">
             <i class="fa-solid fa-arrow-left"></i> Ver más autos
           </a>
         </div>
@@ -132,19 +132,16 @@ window.setMain = function(index){
   document.querySelectorAll(".gallery-thumb").forEach((t,i)=> t.classList.toggle("active", i===index));
 };
 
-/* ---- Cargar auto desde Firestore ---- */
-if(carId && firebaseReady){
-  db.collection("autos").doc(carId).get()
-    .then(doc=>{
-      if(!doc.exists){ location.href = "inicio.html"; return; }
-      renderDetail({ id:doc.id, ...doc.data() });
+/* ---- Cargar auto desde Supabase ---- */
+if (carId) {
+  supabaseClient.from("autos").select("*").eq("id", carId).single()
+    .then(({ data, error }) => {
+      if (error || !data) { location.href = "index.html"; return; }
+      renderDetail(data);
     })
-    .catch(err=>{
+    .catch(err => {
       console.error("[Listo Car] Error al cargar auto:", err);
       document.getElementById("detailContent").innerHTML =
-        '<p style="text-align:center;color:var(--muted);padding:4rem 0">No se pudo cargar el vehículo. <a href="inicio.html" style="color:var(--orange)">Volver al inicio</a></p>';
+        '<p style="text-align:center;color:var(--muted);padding:4rem 0">No se pudo cargar el vehículo. <a href="index.html" style="color:var(--orange)">Volver al inicio</a></p>';
     });
-} else if(!firebaseReady){
-  document.getElementById("detailContent").innerHTML =
-    '<p style="text-align:center;color:var(--muted);padding:4rem 0">Firebase no está configurado. <a href="inicio.html" style="color:var(--orange)">Volver al inicio</a></p>';
 }

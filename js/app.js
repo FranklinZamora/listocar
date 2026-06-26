@@ -87,22 +87,17 @@ function renderCatalog(cars) {
     .join("");
 }
 
-/* ---------- Carga desde Firestore ---------- */
-function loadCars() {
-  if (firebaseReady) {
-    db.collection("autos")
-      .orderBy("creado", "desc")
-      .onSnapshot(
-        (snap) => {
-          renderCatalog(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-        },
-        (err) => {
-          console.error("[Listo Car] Firestore error:", err);
-          renderCatalog([]);
-        },
-      );
-  } else {
+/* ---------- Carga desde Supabase ---------- */
+async function loadCars() {
+  const { data, error } = await supabaseClient
+    .from("autos")
+    .select("*")
+    .order("creado", { ascending: false });
+  if (error) {
+    console.error("[Listo Car] Supabase error:", error);
     renderCatalog([]);
+    return;
   }
+  renderCatalog(data || []);
 }
 loadCars();

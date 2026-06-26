@@ -1,20 +1,19 @@
 /* ============================================================ */
-/*  PANEL ADMIN — login, tabla, 3 fotos, CRUD con Firestore     */
+/*  PANEL ADMIN — login, tabla, 3 fotos, CRUD con Supabase      */
 /* ============================================================ */
 
 const loginView = document.getElementById("loginView");
 const dashView  = document.getElementById("dashView");
 let currentCars = [];
 
-/* ---------- Firebase Auth — estado de sesión ---------- */
+/* ---------- Supabase Auth — estado de sesión ---------- */
 loginView.style.display = "none";
 dashView.style.display  = "none";
 
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (session) {
     loginView.style.display = "none";
     dashView.style.display  = "block";
-    document.getElementById("fbWarn").style.display = firebaseReady ? "none" : "block";
     loadCars();
   } else {
     loginView.style.display = "block";
@@ -24,11 +23,10 @@ firebase.auth().onAuthStateChanged(user => {
 
 /* ---------- Login ---------- */
 const AUTH_ERRORS = {
-  "auth/wrong-password":     "Contraseña incorrecta.",
-  "auth/invalid-credential": "Correo o contraseña incorrectos.",
-  "auth/user-not-found":     "Usuario no encontrado.",
-  "auth/invalid-email":      "Correo inválido.",
-  "auth/too-many-requests":  "Demasiados intentos. Intenta más tarde.",
+  "Invalid login credentials":        "Correo o contraseña incorrectos.",
+  "Email not confirmed":              "Confirma tu correo electrónico.",
+  "Too many requests":                "Demasiados intentos. Intenta más tarde.",
+  "User not found":                   "Usuario no encontrado.",
 };
 
 document.getElementById("loginForm").addEventListener("submit", async e => {
@@ -38,59 +36,61 @@ document.getElementById("loginForm").addEventListener("submit", async e => {
   const pass  = document.getElementById("pass").value;
   errEl.textContent = "";
   try {
-    await firebase.auth().signInWithEmailAndPassword(email, pass);
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
   } catch(err) {
-    errEl.textContent = AUTH_ERRORS[err.code] || "Error al iniciar sesión.";
+    errEl.textContent = AUTH_ERRORS[err.message] || "Error al iniciar sesión.";
   }
 });
 
 /* ---------- Logout ---------- */
 document.getElementById("logoutBtn").addEventListener("click", () => {
-  firebase.auth().signOut();
+  supabaseClient.auth.signOut();
 });
 
-/* ---------- Carga de autos en tiempo real ---------- */
-function loadCars(){
-  if(firebaseReady){
-    db.collection("autos").orderBy("creado","desc").onSnapshot(snap=>{
-      currentCars = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      renderAdminTable();
-    }, err=>{
-      console.error("[Listo Car] Firestore error:", err);
-      currentCars = [];
-      renderAdminTable();
-    });
-  } else {
+/* ---------- Carga de autos ---------- */
+async function loadCars() {
+  const { data, error } = await supabaseClient
+    .from("autos")
+    .select("*")
+    .order("creado", { ascending: false });
+  if (error) {
+    console.error("[Listo Car] Supabase error:", error);
     currentCars = [];
-    renderAdminTable();
+  } else {
+    currentCars = data || [];
   }
+  renderAdminTable();
 }
 
 /* ---------- Tabla ---------- */
 const adminRows = document.getElementById("adminRows");
-function renderAdminTable(){
+function renderAdminTable() {
   document.getElementById("countNum").textContent = currentCars.length;
-  if(!currentCars.length){
+  if (!currentCars.length) {
     adminRows.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Sin autos todavía.</td></tr>';
     return;
   }
-  adminRows.innerHTML = currentCars.map(c=>{
+  adminRows.innerHTML = currentCars.map(c => {
     const fotos = c.fotos && c.fotos.length ? c.fotos : (c.foto ? [c.foto] : []);
     const thumb = fotos[0] || FALLBACK_IMG;
     return `
     <tr>
-      <td><img class="thumb" src="${esc(thumb)}" alt="" onerror="this.src='${FALLBACK_IMG}'"></td>
+      <td><img class="thumb" src="${esc(thumb)}" alt="" data-fallback></td>
       <td><span class="nm">${esc(c.nombre)}</span></td>
-      <td>${c.anio||''}</td>
+      <td>${Number(c.anio)||''}</td>
       <td><span class="pr">${money(c.precio)}</span></td>
       <td>
         <div class="row-actions">
-          <button class="icon-btn edit" title="Editar" onclick="editCar('${c.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4v16h16v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button class="icon-btn del" title="Eliminar" onclick="deleteCar('${c.id}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button>
+          <button class="icon-btn edit" title="Editar" onclick="editCar('${esc(c.id)}')"><svg viewBox="0 0 24 24"><path d="M11 4H4v16h16v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn del" title="Eliminar" onclick="deleteCar('${esc(c.id)}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button>
         </div>
       </td>
     </tr>`;
   }).join("");
+  adminRows.querySelectorAll("img[data-fallback]").forEach(img => {
+    img.addEventListener("error", function(){ this.src = FALLBACK_IMG; }, { once: true });
+  });
 }
 
 /* ============================================================ */
@@ -102,22 +102,22 @@ const photoState = [
   { file:null, existingUrl:"" }
 ];
 
-function initPhotoSlots(){
-  [0,1,2].forEach(slot=>{
+function initPhotoSlots() {
+  [0,1,2].forEach(slot => {
     const zone     = document.querySelector(`.upload-zone[data-slot="${slot}"]`);
     const input    = document.querySelector(`.file-input[data-slot="${slot}"]`);
     const preview  = document.querySelector(`.preview-img[data-slot="${slot}"]`);
     const clearBtn = document.querySelector(`.clear-photo-btn[data-slot="${slot}"]`);
     const label    = document.querySelector(`.upload-label[data-slot="${slot}"]`);
 
-    zone.addEventListener("click", ()=> input.click());
+    zone.addEventListener("click", () => input.click());
 
-    input.addEventListener("change", e=>{
+    input.addEventListener("change", e => {
       const f = e.target.files[0];
-      if(!f) return;
+      if (!f) return;
       photoState[slot].file = f;
       const reader = new FileReader();
-      reader.onload = ev=>{
+      reader.onload = ev => {
         preview.src = ev.target.result;
         preview.style.display = "block";
         clearBtn.style.display = "block";
@@ -126,7 +126,7 @@ function initPhotoSlots(){
       reader.readAsDataURL(f);
     });
 
-    clearBtn.addEventListener("click", ()=>{
+    clearBtn.addEventListener("click", () => {
       photoState[slot].file = null;
       photoState[slot].existingUrl = "";
       preview.src = "";
@@ -140,13 +140,13 @@ function initPhotoSlots(){
 initPhotoSlots();
 
 /* ---------- Compresión (máx 800px, 0.8 calidad) ---------- */
-function compressImage(file){
-  return new Promise((resolve,reject)=>{
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
     const img = new Image();
     const reader = new FileReader();
-    reader.onload = e=>{ img.src = e.target.result; };
+    reader.onload = e => { img.src = e.target.result; };
     reader.onerror = reject;
-    img.onload = ()=>{
+    img.onload = () => {
       const maxW = 800;
       const scale = Math.min(1, maxW / img.width);
       const w = Math.round(img.width * scale);
@@ -154,7 +154,7 @@ function compressImage(file){
       const canvas = document.createElement("canvas");
       canvas.width = w; canvas.height = h;
       canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      canvas.toBlob(b=> b ? resolve(b) : reject(new Error("Error al comprimir")), "image/jpeg", 0.8);
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error("Error al comprimir")), "image/jpeg", 0.8);
     };
     img.onerror = reject;
     reader.readAsDataURL(file);
@@ -162,21 +162,21 @@ function compressImage(file){
 }
 
 /* ---------- Subida a Cloudinary ---------- */
-async function uploadToCloudinary(blob){
+async function uploadToCloudinary(blob) {
   const fd = new FormData();
   fd.append("file", blob);
   fd.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
   const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:"POST", body:fd });
-  if(!res.ok) throw new Error("Cloudinary respondió " + res.status);
+  if (!res.ok) throw new Error("Cloudinary respondió " + res.status);
   return (await res.json()).secure_url;
 }
 
 /* ============================================================ */
 /*  GUARDAR AUTO (alta o edición)                               */
 /* ============================================================ */
-function msg(type, text){ const el = document.getElementById("formMsg"); el.className="msg "+type; el.textContent=text; }
+function msg(type, text) { const el = document.getElementById("formMsg"); el.className="msg "+type; el.textContent=text; }
 
-document.getElementById("carForm").addEventListener("submit", async e=>{
+document.getElementById("carForm").addEventListener("submit", async e => {
   e.preventDefault();
   const saveBtn = document.getElementById("saveBtn");
   const editId  = document.getElementById("editId").value;
@@ -192,54 +192,52 @@ document.getElementById("carForm").addEventListener("submit", async e=>{
     puertas:     Number(document.getElementById("fPuertas").value) || null,
     ac:          document.getElementById("fAc").checked
   };
-  Object.keys(car).forEach(k=> car[k]===null && delete car[k]);
-
-  if(!firebaseReady){
-    msg("err","Firebase no está configurado.");
-    return;
-  }
+  Object.keys(car).forEach(k => car[k] === null && delete car[k]);
 
   saveBtn.disabled = true;
   try {
     const fotosFinales = [];
-    for(let i = 0; i < 3; i++){
-      if(photoState[i].file){
+    for (let i = 0; i < 3; i++) {
+      if (photoState[i].file) {
         msg("info", `Subiendo foto ${i+1}…`);
         const blob = await compressImage(photoState[i].file);
         const url  = await uploadToCloudinary(blob);
         fotosFinales.push(url);
-      } else if(photoState[i].existingUrl){
+      } else if (photoState[i].existingUrl) {
         fotosFinales.push(photoState[i].existingUrl);
       }
     }
 
-    if(!fotosFinales.length && !editId){
-      msg("err","Agrega al menos una foto del auto.");
+    if (!fotosFinales.length && !editId) {
+      msg("err", "Agrega al menos una foto del auto.");
       saveBtn.disabled = false;
       return;
     }
 
-    if(fotosFinales.length) car.fotos = fotosFinales;
+    if (fotosFinales.length) car.fotos = fotosFinales;
 
-    if(editId){
-      await db.collection("autos").doc(editId).update(car);
-      msg("ok","Auto actualizado ✓");
+    if (editId) {
+      const { error } = await supabaseClient.from("autos").update(car).eq("id", editId);
+      if (error) throw error;
+      msg("ok", "Auto actualizado ✓");
     } else {
-      car.creado = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection("autos").add(car);
-      msg("ok","Auto agregado ✓");
+      car.creado = new Date().toISOString();
+      const { error } = await supabaseClient.from("autos").insert(car);
+      if (error) throw error;
+      msg("ok", "Auto agregado ✓");
     }
+    await loadCars();
     resetForm();
-  } catch(err){
+  } catch(err) {
     console.error(err);
-    msg("err","Error: " + err.message);
+    msg("err", "Error: " + err.message);
   } finally {
     saveBtn.disabled = false;
   }
 });
 
 /* ---------- Reset del formulario ---------- */
-function resetPhotoSlot(slot){
+function resetPhotoSlot(slot) {
   photoState[slot].file = null;
   photoState[slot].existingUrl = "";
   const preview  = document.querySelector(`.preview-img[data-slot="${slot}"]`);
@@ -252,37 +250,37 @@ function resetPhotoSlot(slot){
   input.value = "";
 }
 
-function resetForm(){
+function resetForm() {
   document.getElementById("carForm").reset();
   document.getElementById("editId").value = "";
   [0,1,2].forEach(resetPhotoSlot);
   document.getElementById("formTitle").textContent = "Agregar auto";
   document.getElementById("formNum").textContent = "+";
   document.getElementById("editBanner").style.display = "none";
-  setTimeout(()=>{ const el=document.getElementById("formMsg"); el.textContent=""; el.className="msg"; }, 4000);
+  setTimeout(() => { const el = document.getElementById("formMsg"); el.textContent=""; el.className="msg"; }, 4000);
 }
 
 /* ---------- Editar ---------- */
-window.editCar = function(id){
-  const c = currentCars.find(x=>x.id===id);
-  if(!c) return;
+window.editCar = function(id) {
+  const c = currentCars.find(x => x.id === id);
+  if (!c) return;
 
-  document.getElementById("editId").value    = c.id;
-  document.getElementById("fName").value     = c.nombre || "";
-  document.getElementById("fYear").value     = c.anio || "";
-  document.getElementById("fPrice").value    = c.precio || "";
-  document.getElementById("fDesc").value     = c.descripcion || "";
-  document.getElementById("fTransmision").value = c.transmision || "";
-  document.getElementById("fPasajeros").value   = c.pasajeros || "";
-  document.getElementById("fCombustible").value = c.combustible || "";
-  document.getElementById("fPuertas").value     = c.puertas || "";
-  document.getElementById("fAc").checked        = !!c.ac;
+  document.getElementById("editId").value        = c.id;
+  document.getElementById("fName").value         = c.nombre || "";
+  document.getElementById("fYear").value         = c.anio || "";
+  document.getElementById("fPrice").value        = c.precio || "";
+  document.getElementById("fDesc").value         = c.descripcion || "";
+  document.getElementById("fTransmision").value  = c.transmision || "";
+  document.getElementById("fPasajeros").value    = c.pasajeros || "";
+  document.getElementById("fCombustible").value  = c.combustible || "";
+  document.getElementById("fPuertas").value      = c.puertas || "";
+  document.getElementById("fAc").checked         = !!c.ac;
 
   const existingFotos = c.fotos && c.fotos.length ? c.fotos : (c.foto ? [c.foto] : []);
-  [0,1,2].forEach(slot=>{
+  [0,1,2].forEach(slot => {
     resetPhotoSlot(slot);
     const url = existingFotos[slot] || "";
-    if(url){
+    if (url) {
       photoState[slot].existingUrl = url;
       const preview  = document.querySelector(`.preview-img[data-slot="${slot}"]`);
       const clearBtn = document.querySelector(`.clear-photo-btn[data-slot="${slot}"]`);
@@ -303,9 +301,13 @@ window.editCar = function(id){
 document.getElementById("cancelEdit").addEventListener("click", resetForm);
 
 /* ---------- Eliminar ---------- */
-window.deleteCar = async function(id){
-  if(!confirm("¿Eliminar este auto del catálogo?")) return;
-  if(!firebaseReady){ alert("Firebase no está configurado."); return; }
-  try { await db.collection("autos").doc(id).delete(); }
-  catch(err){ alert("Error al eliminar: " + err.message); }
+window.deleteCar = async function(id) {
+  if (!confirm("¿Eliminar este auto del catálogo?")) return;
+  try {
+    const { error } = await supabaseClient.from("autos").delete().eq("id", id);
+    if (error) throw error;
+    await loadCars();
+  } catch(err) {
+    alert("Error al eliminar: " + err.message);
+  }
 };
