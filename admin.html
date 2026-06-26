@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin · Listo Car</title>
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Saira+Condensed:wght@600;700;800&display=swap">
+
+<link rel="icon" href="assets/logo.jpeg" type="image/jpeg">
+<link rel="stylesheet" href="css/admin.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<!-- =================== BARRA SUPERIOR =================== -->
+<div class="admin-top">
+  <div class="wrap">
+    <div class="logo">
+      <img src="assets/logo.jpeg" alt="Listo Car">
+      <span class="name">Listo<span class="orange">Car</span></span>
+      <span class="tag">Panel Admin</span>
+    </div>
+    <div class="top-actions">
+      <a class="link-btn" href="index.html">← Volver al sitio</a>
+      <button class="link-btn" id="logoutBtn" type="button">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== LOGIN =================== -->
+<div id="loginView">
+  <div class="login-box">
+    <div class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 018 0v4"></path></svg></div>
+    <h2>Acceso admin</h2>
+    <p>Ingresa la contraseña para administrar el catálogo.</p>
+    <form id="loginForm">
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input type="email" id="email" placeholder="admin@listocar.com" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="pass" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn" style="width:100%">Entrar</button>
+      <div class="login-err" id="loginErr"></div>
+    </form>
+  </div>
+</div>
+
+<!-- =================== DASHBOARD =================== -->
+<div id="dashView" style="display:none">
+  <div class="wrap dash">
+    <div class="fb-warn" id="fbWarn" style="display:none">
+      <b>Modo demostración:</b> Firebase no está configurado. Reemplaza el <b>firebaseConfig</b> en <b>js/config.js</b>.
+    </div>
+
+    <div class="dash-grid">
+
+      <!-- FORMULARIO -->
+      <div class="panel">
+        <h3><span class="num" id="formNum">+</span><span id="formTitle">Agregar auto</span></h3>
+        <div class="editing-banner" id="editBanner">
+          <span>Editando un auto existente</span>
+          <button type="button" id="cancelEdit">Cancelar</button>
+        </div>
+
+        <form id="carForm">
+          <input type="hidden" id="editId">
+
+          <!-- 3 FOTOS -->
+          <div class="photos-section">
+            <div class="photos-label">Fotos del auto</div>
+            <div class="photos-grid">
+              <!-- Slot 0 - Principal -->
+              <div class="photo-slot">
+                <div class="slot-label">Principal *</div>
+                <img class="preview-img" data-slot="0" alt="" style="display:none">
+                <div class="upload-zone" data-slot="0">
+                  <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+                  <span class="upload-label" data-slot="0">Subir foto</span>
+                </div>
+                <button type="button" class="clear-photo-btn" data-slot="0">Quitar foto</button>
+                <input type="file" class="file-input" data-slot="0" accept="image/*" hidden>
+              </div>
+              <!-- Slot 1 -->
+              <div class="photo-slot">
+                <div class="slot-label">Foto 2</div>
+                <img class="preview-img" data-slot="1" alt="" style="display:none">
+                <div class="upload-zone" data-slot="1">
+                  <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+                  <span class="upload-label" data-slot="1">Subir foto</span>
+                </div>
+                <button type="button" class="clear-photo-btn" data-slot="1">Quitar foto</button>
+                <input type="file" class="file-input" data-slot="1" accept="image/*" hidden>
+              </div>
+              <!-- Slot 2 -->
+              <div class="photo-slot">
+                <div class="slot-label">Foto 3</div>
+                <img class="preview-img" data-slot="2" alt="" style="display:none">
+                <div class="upload-zone" data-slot="2">
+                  <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+                  <span class="upload-label" data-slot="2">Subir foto</span>
+                </div>
+                <button type="button" class="clear-photo-btn" data-slot="2">Quitar foto</button>
+                <input type="file" class="file-input" data-slot="2" accept="image/*" hidden>
+              </div>
+            </div>
+          </div>
+
+          <!-- DATOS BÁSICOS -->
+          <div class="field">
+            <label>Nombre del auto</label>
+            <input type="text" id="fName" placeholder="Nissan Versa" required>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Año</label>
+              <input type="number" id="fYear" placeholder="2024" min="1990" max="2030" required>
+            </div>
+            <div class="field">
+              <label>Precio / día (MXN)</label>
+              <input type="number" id="fPrice" placeholder="650" min="0" required>
+            </div>
+          </div>
+
+          <!-- ESPECIFICACIONES -->
+          <div class="form-row">
+            <div class="field">
+              <label>Transmisión</label>
+              <select id="fTransmision">
+                <option value="">-- Selecciona --</option>
+                <option value="Automático">Automático</option>
+                <option value="Manual">Manual</option>
+                <option value="CVT">CVT</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Pasajeros</label>
+              <input type="number" id="fPasajeros" placeholder="5" min="1" max="15">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>Combustible</label>
+              <select id="fCombustible">
+                <option value="">-- Selecciona --</option>
+                <option value="Gasolina">Gasolina</option>
+                <option value="Diésel">Diésel</option>
+                <option value="Híbrido">Híbrido</option>
+                <option value="Eléctrico">Eléctrico</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Puertas</label>
+              <select id="fPuertas">
+                <option value="">-- Selecciona --</option>
+                <option value="2">2 puertas</option>
+                <option value="4">4 puertas</option>
+                <option value="5">5 puertas</option>
+              </select>
+            </div>
+          </div>
+          <label class="field-check">
+            <input type="checkbox" id="fAc">
+            <span>Aire acondicionado</span>
+          </label>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="field">
+            <label>Descripción</label>
+            <textarea id="fDesc" placeholder="Sedán automático, A/C, ideal ciudad…" required></textarea>
+          </div>
+
+          <button type="submit" class="btn" style="width:100%" id="saveBtn">Guardar auto</button>
+          <div class="msg" id="formMsg"></div>
+        </form>
+      </div>
+
+      <!-- TABLA -->
+      <div class="panel">
+        <h3><span class="num" id="countNum">0</span>Autos en catálogo</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Foto</th><th>Nombre</th><th>Año</th><th>Precio/día</th><th></th></tr>
+            </thead>
+            <tbody id="adminRows">
+              <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Sin autos todavía.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

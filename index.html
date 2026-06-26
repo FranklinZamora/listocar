@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listo Car · Renta de autos en Los Mochis</title>
+    <meta
+      name="description"
+      content="Renta de autos fácil, rápida y sin complicaciones en Los Mochis, Sinaloa. Entrega a domicilio. Tu auto, listo cuando lo necesitas."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Saira+Condensed:wght@600;700;800&display=swap"
+    />
+
+    <link rel="icon" href="assets/logo.jpeg" type="image/jpeg" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Firebase SDK (compat) vía CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  </head>
+  <body>
+    <!-- =================== NAVBAR =================== -->
+    <header>
+      <div class="wrap nav">
+        <a href="#inicio" class="logo">
+          <img src="assets/logo.jpeg" alt="Listo Car" />
+          <span class="name">Listo<span class="orange">Car</span></span>
+        </a>
+        <nav class="nav-links" id="navLinks">
+          <a href="#inicio">Inicio</a>
+          <a href="#como">¿Cómo funciona?</a>
+          <a href="#catalogo">Autos</a>
+          <a href="#contacto">Contacto</a>
+          <a href="#" class="btn" id="navWa">
+            <i class="fa-brands fa-whatsapp"></i>
+            WhatsApp
+          </a>
+        </nav>
+        <button class="burger" id="burger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =================== HERO =================== -->
+    <section class="hero" id="inicio">
+      <div class="wrap">
+        <div class="hero-inner">
+          <div class="kicker">Los Mochis, Sinaloa</div>
+          <h1>Renta de autos<br /><span class="l2">fácil y rápida</span></h1>
+          <p class="sub">
+            Tu auto, listo cuando lo necesitas. Sin complicaciones y con entrega
+            a domicilio donde tú estés.
+          </p>
+          <div class="hero-cta">
+            <a href="#" class="btn" id="heroWa">
+              <i class="fa-brands fa-whatsapp"></i>
+              Reserva por WhatsApp
+            </a>
+            <a href="#catalogo" class="btn ghost">Ver autos</a>
+          </div>
+          <p class="hero-slogan">
+            Te llevamos tu auto hasta la puerta de tu casa.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== BENEFICIOS =================== -->
+    <section class="benefits" id="beneficios">
+      <div class="wrap">
+        <div class="benefits-grid">
+          <div class="benefit">
+            <div class="ico">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M5 11l1.5-4.5A2 2 0 018.4 5h7.2a2 2 0 011.9 1.5L19 11M5 11h14v6H5v-6zM7 17v2M17 17v2"
+                ></path>
+                <circle cx="7.5" cy="14" r=".5"></circle>
+                <circle cx="16.5" cy="14" r=".5"></circle>
+              </svg>
+            </div>
+            <h3>Vehículos en excelentes condiciones</h3>
+            <p>Revisados y limpios antes de cada renta, listos para rodar.</p>
+          </div>
+          <div class="benefit">
+            <div class="ico">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"
+                ></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+            </div>
+            <h3>Seguridad y confianza</h3>
+            <p>Documentación al día y cobertura en cada vehículo rentado.</p>
+          </div>
+          <div class="benefit">
+            <div class="ico">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="13" r="7"></circle>
+                <path d="M12 13V9M12 2h2M11 2h2"></path>
+              </svg>
+            </div>
+            <h3>Reserva rápida y sencilla</h3>
+            <p>
+              Un mensaje por WhatsApp y en minutos tienes tu auto confirmado.
+            </p>
+          </div>
+          <div class="benefit">
+            <div class="ico">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 11l9-7 9 7M5 10v9h14v-9M9 19v-5h6v5"></path>
+              </svg>
+            </div>
+            <h3>Entrega a domicilio</h3>
+            <p>
+              Llevamos el auto hasta donde tú estés en Los Mochis, sin costo
+              extra.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== CÓMO FUNCIONA =================== -->
+    <section class="how" id="como">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="kicker">Simple y rápido</div>
+          <h2>¿Cómo <span class="orange">funciona</span>?</h2>
+          <p>
+            Rentar un auto nunca fue tan fácil. En tres pasos tienes tu vehículo
+            en la puerta.
+          </p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <h3>Elige tu auto</h3>
+            <p>
+              Revisa nuestro catálogo y escoge el vehículo que más te convenga
+              según tu plan y presupuesto.
+            </p>
+            <div class="step-icon"><i class="fa-solid fa-car"></i></div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <h3>Reserva por WhatsApp</h3>
+            <p>
+              Escríbenos con el auto que elegiste y la fecha. Te confirmamos
+              disponibilidad en minutos.
+            </p>
+            <div class="step-icon"><i class="fa-brands fa-whatsapp"></i></div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <h3>Recibe en tu puerta</h3>
+            <p>
+              Llevamos el auto hasta donde tú estés en Los Mochis. Sin filas ni
+              trámites complicados.
+            </p>
+            <div class="step-icon">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== REQUISITOS =================== -->
+    <section class="reqs" id="requisitos">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="kicker">Antes de reservar</div>
+          <h2>¿Qué <span class="orange">necesitas</span> para rentar?</h2>
+          <p>
+            Ten estos documentos listos y tu renta será rápida y sin
+            contratiempos.
+          </p>
+        </div>
+        <div class="reqs-grid">
+          <div class="req-item">
+            <div class="req-ico"><i class="fa-solid fa-id-card"></i></div>
+            <h3>Licencia de conducir</h3>
+            <p>Vigente al momento de la renta.</p>
+          </div>
+          <div class="req-item">
+            <div class="req-ico"><i class="fa-solid fa-passport"></i></div>
+            <h3>Identificación oficial</h3>
+            <p>INE, Pasaporte o Visa.</p>
+          </div>
+          <div class="req-item">
+            <div class="req-ico"><i class="fa-solid fa-credit-card"></i></div>
+            <h3>Tarjeta de crédito</h3>
+            <p>Personalizada, no departamental ni Fintech.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== CATÁLOGO =================== -->
+    <section class="catalog" id="catalogo">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="kicker">Nuestra flota</div>
+          <h2>Elige tu <span class="orange">auto ideal</span></h2>
+          <p>
+            Autos limpios, revisados y listos para entregar. Renta el que mejor
+            se acomode a tu plan y nosotros te lo llevamos.
+          </p>
+        </div>
+        <div class="cars" id="carGrid">
+          <div class="loading">Cargando autos…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== TESTIMONIOS =================== -->
+    <section class="reviews" id="resenas">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="kicker">Lo que dicen nuestros clientes</div>
+          <h2>
+            Clientes que ya <span class="orange">rodaron con nosotros</span>
+          </h2>
+        </div>
+        <div class="reviews-grid">
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <blockquote>
+              El servicio es excelente. El auto llegó perfecto y puntual en mi
+              domicilio. Sin duda vuelvo a rentar con Listo Car.
+            </blockquote>
+            <div class="review-author">
+              <div class="review-avatar" style="background: #3b82f6">CM</div>
+              <div class="info"><b>Carlos M.</b><span>Los Mochis</span></div>
+            </div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <blockquote>
+              Super fácil reservar, solo mandé un mensaje por WhatsApp y en dos
+              horas ya tenía el carro en mi casa. Increíble experiencia.
+            </blockquote>
+            <div class="review-author">
+              <div class="review-avatar" style="background: #8b5cf6">LG</div>
+              <div class="info"><b>Laura G.</b><span>Los Mochis</span></div>
+            </div>
+          </div>
+          <div class="review">
+            <div class="stars">★★★★★</div>
+            <blockquote>
+              Ya van tres veces que rento con ellos. Siempre buenos autos, buen
+              precio y excelente trato. Los recomiendo al cien.
+            </blockquote>
+            <div class="review-author">
+              <div class="review-avatar" style="background: #10b981">RH</div>
+              <div class="info"><b>Roberto H.</b><span>Los Mochis</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== CTA BANNER =================== -->
+    <section class="cta-banner">
+      <div class="wrap">
+        <h2>¿Listo para salir?</h2>
+        <p>Escríbenos ahora y tenemos tu auto en camino en menos de 2 horas.</p>
+        <a href="#" class="btn" id="ctaBannerWa">
+          <i class="fa-brands fa-whatsapp"></i>
+          Reservar ahora
+        </a>
+      </div>
+    </section>
+
+    <!-- =================== CONTACTO =================== -->
+    <section class="contact" id="contacto">
+      <div class="wrap">
+        <div class="contact-grid">
+          <div>
+            <div
+              class="kicker"
+              style="
+                color: var(--orange);
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+              "
+            >
+              Contáctanos
+            </div>
+            <p>
+              Escríbenos por WhatsApp o síguenos en redes. Te respondemos rápido
+              y agendamos la entrega de tu auto donde estés.
+            </p>
+            <div class="socials">
+              <a
+                class="social"
+                id="ctWa"
+                href="#"
+                target="_blank"
+                rel="noopener"
+              >
+                <div class="si s-wa"><i class="fa-brands fa-whatsapp"></i></div>
+                <div class="txt">
+                  <b>WhatsApp</b><span>Reserva o cotiza al instante</span>
+                </div>
+              </a>
+              <a
+                class="social"
+                href="https://www.facebook.com/profile.php?id=61591444702809"
+                target="_blank"
+                rel="noopener"
+              >
+                <div class="si s-fb">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="txt">
+                  <b>Facebook</b><span>Listo Car · Los Mochis</span>
+                </div>
+              </a>
+              <a
+                class="social"
+                href="https://www.instagram.com/listo_carlm/"
+                target="_blank"
+                rel="noopener"
+              >
+                <div class="si s-ig">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="txt"><b>Instagram</b><span>@listo_carlm</span></div>
+              </a>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="ico">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 11l9-7 9 7M5 10v9h14v-9M9 19v-5h6v5"></path>
+              </svg>
+            </div>
+            <h3>Entrega a domicilio</h3>
+            <p style="color: var(--muted)">
+              Donde tú estés, ahí vamos. Sin filas ni trámites largos: agenda y
+              nosotros llevamos tu auto.
+            </p>
+            <a href="#" class="btn" id="cardWa">
+              <i class="fa-brands fa-whatsapp"></i>
+              Agendar entrega
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== FOOTER =================== -->
+    <footer>
+      <div class="wrap">
+        <div class="foot">
+          <a href="#inicio" class="logo">
+            <img
+              src="assets/logo.jpeg"
+              alt="Listo Car"
+              style="height: 40px; border-radius: 8px"
+            />
+            <span class="name">Listo<span class="orange">Car</span></span>
+          </a>
+          <div class="foot-info">
+            <div class="slg">Tu auto, listo cuando lo necesitas.</div>
+            Renta de autos · Los Mochis, Sinaloa, México
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <span
+            >© <span id="year"></span> Listo Car. Todos los derechos
+            reservados.</span
+          >
+          <a class="admin-dot" href="admin.html" title="Administración"
+            >· admin ·</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

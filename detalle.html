@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalle · Listo Car</title>
+<meta name="description" content="Detalles del vehículo en renta · Listo Car">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Saira+Condensed:wght@600;700;800&display=swap">
+
+<link rel="icon" href="assets/logo.jpeg" type="image/jpeg">
+<link rel="stylesheet" href="css/detalle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- =================== NAVBAR =================== -->
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.jpeg" alt="Listo Car">
+      <span class="name">Listo<span class="orange">Car</span></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#inicio">Inicio</a>
+      <a href="index.html#beneficios">Beneficios</a>
+      <a href="index.html#catalogo">Autos</a>
+      <a href="index.html#contacto">Contacto</a>
+      <a href="#" class="btn" id="navWa">
+        <i class="fa-brands fa-whatsapp"></i>
+        WhatsApp
+      </a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- =================== CONTENIDO =================== -->
+<main class="page">
+  <div class="wrap">
+    <a href="index.html#catalogo" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i>
+      Volver al catálogo
+    </a>
+    <div id="detailContent">
+      <div style="text-align:center;padding:5rem 0;color:var(--muted)">Cargando vehículo…</div>
+    </div>
+  </div>
+</main>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.jpeg" alt="Listo Car" style="height:38px;border-radius:8px">
+        <span class="name">Listo<span class="orange">Car</span></span>
+      </a>
+      <div style="color:var(--muted);font-size:.88rem">Renta de autos · Los Mochis, Sinaloa</div>
+    </div>
+    <div class="foot-bottom">© <span id="year"></span> Listo Car. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/detalle.js"></script>
+</body>
+</html>

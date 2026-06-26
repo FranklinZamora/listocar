@@ -1,0 +1,219 @@
+/* ============================================================ */
+/*  LISTO CAR — Estilos de página de detalle de vehículo       */
+/* ============================================================ */
+:root{
+  --dark:#0F1923;
+  --dark-2:#162330;
+  --dark-3:#1d2c3a;
+  --orange:#F47B20;
+  --orange-d:#d9650f;
+  --white:#FFFFFF;
+  --muted:#9fb0bf;
+  --line:rgba(255,255,255,.10);
+  --green:#3ddc84;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',system-ui,sans-serif;background:var(--dark);color:var(--white);line-height:1.55}
+h1,h2,h3{font-family:'Saira Condensed','Montserrat',sans-serif;text-transform:uppercase;line-height:.95;letter-spacing:.01em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.orange{color:var(--orange)}
+.wrap{width:min(1200px,92vw);margin:0 auto}
+
+/* ---------- Navbar ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,25,35,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px}
+.logo{display:flex;align-items:center;gap:.6rem}
+.logo img{height:46px;width:auto;border-radius:8px}
+.logo .name{font-family:'Saira Condensed';font-weight:800;font-size:1.7rem;letter-spacing:.01em}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{font-weight:600;font-size:.95rem;color:var(--muted);transition:color .2s;position:relative}
+.nav-links a:hover{color:#fff}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;background:var(--orange);transition:width .25s}
+.nav-links a:hover::after{width:100%}
+.nav .btn{padding:.6em 1.3em;font-size:.95rem}
+.burger{display:none;background:none;border:none;color:#fff;cursor:pointer;flex-direction:column;gap:5px;padding:6px}
+.burger span{width:26px;height:3px;background:#fff;border-radius:3px;transition:.3s}
+
+/* ---------- Botones ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;
+  font-family:'Saira Condensed',sans-serif;text-transform:uppercase;
+  font-weight:700;font-size:1.05rem;letter-spacing:.03em;
+  padding:.85em 1.6em;border-radius:999px;border:none;cursor:pointer;
+  background:var(--orange);color:#fff;
+  transition:transform .15s, box-shadow .2s, background .2s;
+  box-shadow:0 8px 24px rgba(244,123,32,.35);
+}
+.btn:hover{transform:translateY(-2px);background:var(--orange-d);box-shadow:0 12px 30px rgba(244,123,32,.45)}
+.btn.ghost{background:transparent;border:2px solid var(--orange);color:var(--orange);box-shadow:none}
+.btn.ghost:hover{background:var(--orange);color:#fff}
+.btn i{font-size:1.25em;line-height:1}
+
+/* ---------- Página ---------- */
+.page{padding:100px 0 90px}
+
+/* ---------- Back link ---------- */
+.back-link{
+  display:inline-flex;align-items:center;gap:.45rem;
+  color:var(--muted);font-size:.85rem;font-weight:600;
+  background:var(--dark-3);border:1px solid var(--line);
+  padding:.45em .9em;border-radius:999px;margin-bottom:2rem;
+  transition:color .2s,border-color .2s;
+}
+.back-link:hover{color:#fff;border-color:rgba(255,255,255,.25)}
+.back-link i{font-size:.9em}
+
+/* ---------- Grid principal ---------- */
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:3rem;
+  align-items:start;
+  margin-bottom:3.5rem;
+}
+
+/* ---------- Galería ---------- */
+.gallery-wrap{position:relative}
+.gallery-main{
+  aspect-ratio:16/9;border-radius:18px;overflow:hidden;
+  background:#0a121a;margin-bottom:.9rem;position:relative;
+}
+.gallery-main img{
+  width:100%;height:100%;object-fit:cover;
+  transition:opacity .22s ease,transform .3s ease;
+}
+.gallery-main img.fade{opacity:0;transform:scale(1.02)}
+.photo-counter{
+  position:absolute;bottom:.9rem;right:.9rem;
+  background:rgba(10,18,26,.75);backdrop-filter:blur(6px);
+  color:#fff;font-size:.78rem;font-weight:700;
+  padding:.3em .8em;border-radius:999px;
+  border:1px solid var(--line);pointer-events:none;
+  font-family:'Saira Condensed';letter-spacing:.05em;
+}
+.gallery-thumbs{display:flex;gap:.6rem;flex-wrap:wrap}
+.gallery-thumb{
+  width:88px;height:60px;border-radius:10px;overflow:hidden;
+  border:2px solid var(--line);cursor:pointer;
+  transition:border-color .2s,transform .15s;
+  background:#0a121a;flex:none;padding:0;
+}
+.gallery-thumb.active,.gallery-thumb:hover{border-color:var(--orange)}
+.gallery-thumb.active{transform:scale(1.06)}
+.gallery-thumb img{width:100%;height:100%;object-fit:cover}
+
+/* ---------- Panel info ---------- */
+.info-panel{position:sticky;top:90px;display:flex;flex-direction:column}
+
+.avail-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.25);
+  color:var(--green);font-size:.75rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:.35em .9em;border-radius:999px;
+  width:fit-content;margin-bottom:1rem;
+}
+.avail-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
+
+.info-name{font-size:clamp(2.2rem,4vw,3rem);font-weight:800;margin-bottom:.5rem;line-height:1}
+.info-year{
+  display:inline-block;background:var(--dark-3);border:1px solid var(--line);
+  color:var(--muted);font-size:.8rem;font-weight:700;
+  padding:.3em .9em;border-radius:999px;margin-bottom:1.2rem;
+  font-family:'Saira Condensed';letter-spacing:.06em;
+}
+
+/* Chips rápidos de specs */
+.info-quick-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:0}
+.info-chip{
+  display:inline-flex;align-items:center;gap:.35em;
+  background:var(--dark-3);border:1px solid var(--line);
+  color:var(--muted);font-size:.78rem;font-weight:600;
+  padding:.3em .75em;border-radius:999px;
+}
+.info-chip i{font-size:.85em;color:var(--orange)}
+.info-chip.ac-yes{color:var(--green);border-color:rgba(61,220,132,.25)}
+.info-chip.ac-yes i{color:var(--green)}
+
+/* Precio */
+.info-price-wrap{padding:1.3rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:1.3rem 0 1.6rem}
+.price-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.25rem}
+.info-price{display:flex;align-items:baseline;gap:.35rem}
+.info-price .amt{font-family:'Saira Condensed';font-weight:800;font-size:3.2rem;color:var(--orange);line-height:1}
+.info-price .per{color:var(--muted);font-size:.95rem;font-weight:600}
+
+/* Botones */
+.btn-group{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.4rem}
+.btn-group .btn{width:100%;font-size:1.1rem;padding:1em 1.6em}
+.btn-group .btn.ghost{font-size:.95rem;padding:.8em 1.6em}
+
+/* Trust note */
+.trust-note{
+  display:flex;align-items:center;gap:.6rem;
+  color:var(--muted);font-size:.8rem;font-weight:600;
+  background:var(--dark-3);border:1px solid var(--line);
+  border-radius:12px;padding:.8rem 1rem;line-height:1.4;
+}
+.trust-note i{color:var(--orange);font-size:1rem;flex:none}
+
+/* ---------- Especificaciones ---------- */
+.specs-section{margin-bottom:3rem}
+.section-title{
+  font-size:1.4rem;font-weight:800;margin-bottom:1.4rem;
+  padding-bottom:.8rem;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:.6rem;
+}
+.section-title i{color:var(--orange);font-size:1.1rem}
+.specs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem}
+.spec-box{
+  background:var(--dark-2);border:1px solid var(--line);
+  border-radius:14px;padding:1.3rem 1rem;text-align:center;
+  transition:border-color .2s,transform .2s;
+}
+.spec-box:hover{border-color:rgba(244,123,32,.3);transform:translateY(-2px)}
+.spec-box i{font-size:1.5rem;color:var(--orange);display:block;margin-bottom:.6rem}
+.spec-label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.3rem}
+.spec-value{font-size:1rem;font-weight:700}
+.spec-value.yes{color:var(--green)}
+.spec-value.no{color:var(--muted)}
+
+/* ---------- Descripción ---------- */
+.desc-section{margin-bottom:3rem}
+.desc-section p{
+  color:var(--muted);font-size:1rem;line-height:1.85;max-width:800px;
+  background:var(--dark-2);border-left:3px solid var(--orange);
+  border-radius:0 12px 12px 0;padding:1.2rem 1.4rem;
+}
+
+/* ---------- Footer ---------- */
+footer{background:#0a121a;padding:2.5rem 0 1.5rem;border-top:1px solid var(--line)}
+.foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.foot .logo .name{font-size:1.4rem}
+.foot-bottom{margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:#5e7280;font-size:.8rem;text-align:center}
+
+/* ---------- Responsive ---------- */
+@media(max-width:920px){
+  .detail-grid{grid-template-columns:1fr}
+  .info-panel{position:static}
+}
+@media(max-width:760px){
+  .nav-links{
+    position:fixed;top:74px;left:0;right:0;background:var(--dark);flex-direction:column;
+    align-items:flex-start;padding:1.5rem 6vw;gap:1.3rem;border-bottom:1px solid var(--line);
+    transform:translateY(-130%);transition:transform .3s;
+  }
+  .nav-links.open{transform:translateY(0)}
+  .burger{display:flex}
+  .gallery-thumb{width:68px;height:48px}
+  .info-name{font-size:2.2rem}
+  .info-price .amt{font-size:2.6rem}
+}
+@media(max-width:480px){
+  .page{padding:88px 0 70px}
+  .gallery-main{border-radius:12px}
+  .specs-grid{grid-template-columns:repeat(2,1fr)}
+  .back-link{font-size:.8rem}
+  .info-name{font-size:2rem}
+}
