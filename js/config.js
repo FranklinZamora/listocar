@@ -31,7 +31,6 @@ try {
   if (configured) {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     firebaseReady = true;
   } else {
     console.warn(
