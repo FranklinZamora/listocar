@@ -125,6 +125,7 @@ header{
 }
 .spec-chip svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;flex:none}
 .spec-chip.ac{color:#3ddc84;border-color:rgba(61,220,132,.3)}
+.color-dot-sm{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid rgba(255,255,255,.25);vertical-align:middle;margin-right:.2em;flex-shrink:0}
 .detail-link{display:block;text-align:center;margin-top:.6rem;color:var(--muted);font-size:.82rem;font-weight:600;transition:color .2s}
 .detail-link:hover{color:var(--orange)}
 

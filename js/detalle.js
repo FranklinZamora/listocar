@@ -36,7 +36,7 @@ function renderDetail(car){
     car.ac !== undefined ? { icon:'fa-solid fa-snowflake', label:'Aire acond.', value:car.ac?'Sí':'No', cls:car.ac?'yes':'no' } : null,
     car.combustible ? { icon:'fa-solid fa-gas-pump',    label:'Combustible',  value:car.combustible                   } : null,
     car.puertas     ? { icon:'fa-solid fa-door-open',   label:'Puertas',      value:car.puertas + ' puertas'          } : null,
-    car.color       ? { icon:'fa-solid fa-palette',     label:'Color',        value:car.color                         } : null,
+    car.color       ? { icon:'fa-solid fa-palette', label:'Color', value:`<span class="spec-color-dot" style="background:${safeHex(car.color)}"></span>${esc(colorName(car.color))}`, cls:'has-dot' } : null,
   ].filter(Boolean);
 
   // Chips rápidos en el panel (transmisión, pasajeros, A/C)

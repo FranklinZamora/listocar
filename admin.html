@@ -168,7 +168,23 @@
           </div>
           <div class="field">
             <label>Color</label>
-            <input type="text" id="fColor" placeholder="Blanco, Negro, Rojo…">
+            <div class="color-picker-wrap">
+              <div class="color-swatches-grid" id="colorSwatches"></div>
+              <div class="color-custom-row" id="colorCustomRow">
+                <input type="color" id="fColorPicker" value="#888888">
+                <span class="color-custom-label">Color personalizado:</span>
+                <span class="color-custom-hex" id="colorCustomHex">#888888</span>
+              </div>
+              <div class="color-preview-bar" id="colorPreviewBar">
+                <div class="color-preview-swatch" id="colorPreviewSwatch"></div>
+                <div class="color-preview-text">
+                  <span class="color-preview-name" id="colorPreviewName"></span>
+                  <span class="color-preview-hex" id="colorPreviewHex"></span>
+                </div>
+                <button type="button" class="color-clear" id="colorClearBtn" title="Quitar color">✕</button>
+              </div>
+            </div>
+            <input type="hidden" id="fColor">
           </div>
           <label class="field-check">
             <input type="checkbox" id="fAc">

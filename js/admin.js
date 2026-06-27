@@ -23,10 +23,10 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
 /* ---------- Login ---------- */
 const AUTH_ERRORS = {
-  "Invalid login credentials":        "Correo o contraseña incorrectos.",
-  "Email not confirmed":              "Confirma tu correo electrónico.",
-  "Too many requests":                "Demasiados intentos. Intenta más tarde.",
-  "User not found":                   "Usuario no encontrado.",
+  "Invalid login credentials":  "Correo o contraseña incorrectos.",
+  "Email not confirmed":        "Confirma tu correo electrónico.",
+  "Too many requests":          "Demasiados intentos. Intenta más tarde.",
+  "User not found":             "Usuario no encontrado.",
 };
 
 document.getElementById("loginForm").addEventListener("submit", async e => {
@@ -92,6 +92,87 @@ function renderAdminTable() {
     img.addEventListener("error", function(){ this.src = FALLBACK_IMG; }, { once: true });
   });
 }
+
+/* ============================================================ */
+/*  COLOR PICKER                                                 */
+/* ============================================================ */
+function isLightColor(hex) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return (r * 0.299 + g * 0.587 + b * 0.114) > 180;
+}
+
+function initColorPicker() {
+  const grid        = document.getElementById("colorSwatches");
+  const customRow   = document.getElementById("colorCustomRow");
+  const picker      = document.getElementById("fColorPicker");
+  const customHex   = document.getElementById("colorCustomHex");
+  const previewBar  = document.getElementById("colorPreviewBar");
+  const previewSw   = document.getElementById("colorPreviewSwatch");
+  const previewName = document.getElementById("colorPreviewName");
+  const previewHex  = document.getElementById("colorPreviewHex");
+  const fColor      = document.getElementById("fColor");
+  const clearBtn    = document.getElementById("colorClearBtn");
+  let isCustom = false;
+
+  function applyColor(hex, name, custom) {
+    isCustom = custom;
+    fColor.value = hex;
+    grid.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("selected"));
+    if (custom) {
+      grid.querySelector(".other-swatch").classList.add("selected");
+      customRow.style.display = "flex";
+    } else {
+      const sw = grid.querySelector(`.color-swatch[data-hex="${hex}"]`);
+      if (sw) sw.classList.add("selected");
+      customRow.style.display = "none";
+    }
+    previewBar.style.display = "flex";
+    previewSw.style.background = safeHex(hex);
+    previewName.textContent = name;
+    previewHex.textContent = hex.toUpperCase();
+  }
+
+  function clearColor() {
+    isCustom = false;
+    fColor.value = "";
+    grid.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("selected"));
+    customRow.style.display = "none";
+    previewBar.style.display = "none";
+  }
+
+  CAR_COLORS.forEach(c => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "color-swatch" + (isLightColor(c.hex) ? " light" : "");
+    btn.dataset.hex = c.hex;
+    btn.title = c.name;
+    btn.style.background = c.hex;
+    btn.addEventListener("click", () => applyColor(c.hex, c.name, false));
+    grid.appendChild(btn);
+  });
+
+  const otherBtn = document.createElement("button");
+  otherBtn.type = "button";
+  otherBtn.className = "color-swatch other-swatch";
+  otherBtn.title = "Otro color";
+  otherBtn.innerHTML = '<span class="other-icon">+</span>';
+  otherBtn.addEventListener("click", () => applyColor(picker.value, "Personalizado", true));
+  grid.appendChild(otherBtn);
+
+  picker.addEventListener("input", () => {
+    const hex = picker.value;
+    customHex.textContent = hex.toUpperCase();
+    if (isCustom) applyColor(hex, "Personalizado", true);
+  });
+
+  clearBtn.addEventListener("click", clearColor);
+
+  window._setColorPicker = applyColor;
+  window._clearColorPicker = clearColor;
+}
+initColorPicker();
 
 /* ============================================================ */
 /*  GESTIÓN DE 3 FOTOS                                          */
@@ -191,7 +272,7 @@ document.getElementById("carForm").addEventListener("submit", async e => {
     combustible: document.getElementById("fCombustible").value || null,
     puertas:     Number(document.getElementById("fPuertas").value) || null,
     ac:          document.getElementById("fAc").checked,
-    color:       document.getElementById("fColor").value.trim() || null
+    color:       document.getElementById("fColor").value || null,
   };
   Object.keys(car).forEach(k => car[k] === null && delete car[k]);
 
@@ -255,6 +336,7 @@ function resetForm() {
   document.getElementById("carForm").reset();
   document.getElementById("editId").value = "";
   [0,1,2].forEach(resetPhotoSlot);
+  window._clearColorPicker();
   document.getElementById("formTitle").textContent = "Agregar auto";
   document.getElementById("formNum").textContent = "+";
   document.getElementById("editBanner").style.display = "none";
@@ -276,7 +358,19 @@ window.editCar = function(id) {
   document.getElementById("fCombustible").value  = c.combustible || "";
   document.getElementById("fPuertas").value      = c.puertas || "";
   document.getElementById("fAc").checked         = !!c.ac;
-  document.getElementById("fColor").value        = c.color || "";
+
+  if (c.color) {
+    const predefined = CAR_COLORS.find(col => col.hex.toLowerCase() === c.color.toLowerCase());
+    if (predefined) {
+      window._setColorPicker(predefined.hex, predefined.name, false);
+    } else {
+      document.getElementById("fColorPicker").value = c.color;
+      document.getElementById("colorCustomHex").textContent = c.color.toUpperCase();
+      window._setColorPicker(c.color, "Personalizado", true);
+    }
+  } else {
+    window._clearColorPicker();
+  }
 
   const existingFotos = c.fotos && c.fotos.length ? c.fotos : (c.foto ? [c.foto] : []);
   [0,1,2].forEach(slot => {
