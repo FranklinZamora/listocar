@@ -63,3 +63,20 @@ function colorName(hex) {
   const c = CAR_COLORS.find(c => c.hex.toLowerCase() === hex.toLowerCase());
   return c ? c.name : hex.toUpperCase();
 }
+
+/* ------------------------------------------------------------ */
+/*  CATEGORÍAS DE AUTOS                                         */
+/* ------------------------------------------------------------ */
+const CAR_CATEGORIES = [
+  { name: "Sedán",       icon: "fa-solid fa-car-side" },
+  { name: "SUV",         icon: "fa-solid fa-car" },
+  { name: "Hatchback",   icon: "fa-solid fa-car-rear" },
+  { name: "Pickup",      icon: "fa-solid fa-truck-pickup" },
+  { name: "Van",         icon: "fa-solid fa-van-shuttle" },
+  { name: "Deportivo",   icon: "fa-solid fa-gauge-high" },
+];
+
+function categoryIcon(name) {
+  const c = CAR_CATEGORIES.find(c => c.name === name);
+  return c ? c.icon : "fa-solid fa-car";
+}

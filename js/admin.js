@@ -94,6 +94,79 @@ function renderAdminTable() {
 }
 
 /* ============================================================ */
+/*  DROPDOWNS PERSONALIZADOS (transmisión, combustible, puertas) */
+/* ============================================================ */
+const customSelects = {};
+function initCustomSelect(id, options, placeholder) {
+  const wrap    = document.querySelector(`.custom-select[data-for="${id}"]`);
+  if (!wrap) return;
+  const trigger = wrap.querySelector(".cs-trigger");
+  const valueEl = wrap.querySelector(".cs-value");
+  const menu    = wrap.querySelector(".cs-menu");
+  const hidden  = document.getElementById(id);
+
+  function open()  { menu.classList.add("open");    trigger.classList.add("active");    trigger.setAttribute("aria-expanded","true"); }
+  function close() { menu.classList.remove("open"); trigger.classList.remove("active"); trigger.setAttribute("aria-expanded","false"); }
+  function toggle(){ menu.classList.contains("open") ? close() : open(); }
+
+  function setValue(val) {
+    hidden.value = (val == null ? "" : String(val));
+    const opt = options.find(o => String(o.value) === hidden.value);
+    const hasVal = opt && opt.value !== "";
+    valueEl.textContent = hasVal ? opt.label : placeholder;
+    valueEl.classList.toggle("placeholder", !hasVal);
+    menu.querySelectorAll(".cs-option").forEach(o => o.classList.toggle("selected", o.dataset.value === hidden.value));
+    close();
+  }
+
+  options.forEach(o => {
+    if (o.value === "") return; // no listamos el placeholder como opción
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "cs-option";
+    b.dataset.value = o.value;
+    b.setAttribute("role", "option");
+    b.innerHTML = `<span>${o.label}</span><svg class="cs-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`;
+    b.addEventListener("click", () => setValue(o.value));
+    menu.appendChild(b);
+  });
+
+  trigger.addEventListener("click", toggle);
+  document.addEventListener("click", e => { if (!wrap.contains(e.target)) close(); });
+
+  customSelects[id] = { setValue };
+  setValue("");
+}
+
+initCustomSelect("fCategoria", [
+  { value:"", label:"-- Selecciona --" },
+  ...CAR_CATEGORIES.map(c => ({ value:c.name, label:c.name })),
+], "-- Selecciona --");
+
+initCustomSelect("fTransmision", [
+  { value:"", label:"-- Selecciona --" },
+  { value:"Automático", label:"Automático" },
+  { value:"Manual", label:"Manual" },
+], "-- Selecciona --");
+
+initCustomSelect("fCombustible", [
+  { value:"", label:"-- Selecciona --" },
+  { value:"Gasolina", label:"Gasolina" },
+  { value:"Diésel", label:"Diésel" },
+  { value:"Híbrido", label:"Híbrido" },
+  { value:"Eléctrico", label:"Eléctrico" },
+], "-- Selecciona --");
+
+initCustomSelect("fPuertas", [
+  { value:"", label:"-- Selecciona --" },
+  { value:"2", label:"2 puertas" },
+  { value:"4", label:"4 puertas" },
+  { value:"5", label:"5 puertas" },
+], "-- Selecciona --");
+
+function setCustomSelect(id, val) { if (customSelects[id]) customSelects[id].setValue(val); }
+
+/* ============================================================ */
 /*  COLOR PICKER                                                 */
 /* ============================================================ */
 function isLightColor(hex) {
@@ -301,6 +374,7 @@ document.getElementById("carForm").addEventListener("submit", async e => {
     anio:        Number(document.getElementById("fYear").value),
     precio:      Number(document.getElementById("fPrice").value),
     descripcion: document.getElementById("fDesc").value.trim(),
+    categoria:   document.getElementById("fCategoria").value || null,
     transmision: document.getElementById("fTransmision").value || null,
     pasajeros:   Number(document.getElementById("fPasajeros").value) || null,
     combustible: document.getElementById("fCombustible").value || null,
@@ -370,6 +444,10 @@ function resetForm() {
   document.getElementById("carForm").reset();
   document.getElementById("editId").value = "";
   [0,1,2].forEach(resetPhotoSlot);
+  setCustomSelect("fCategoria", "");
+  setCustomSelect("fTransmision", "");
+  setCustomSelect("fCombustible", "");
+  setCustomSelect("fPuertas", "");
   window._clearColorPicker();
   document.getElementById("formTitle").textContent = "Agregar auto";
   document.getElementById("formNum").textContent = "+";
@@ -387,11 +465,12 @@ window.editCar = function(id) {
   document.getElementById("fYear").value         = c.anio || "";
   document.getElementById("fPrice").value        = c.precio || "";
   document.getElementById("fDesc").value         = c.descripcion || "";
-  document.getElementById("fTransmision").value  = c.transmision || "";
   document.getElementById("fPasajeros").value    = c.pasajeros || "";
-  document.getElementById("fCombustible").value  = c.combustible || "";
-  document.getElementById("fPuertas").value      = c.puertas || "";
   document.getElementById("fAc").checked         = !!c.ac;
+  setCustomSelect("fCategoria", c.categoria || "");
+  setCustomSelect("fTransmision", c.transmision || "");
+  setCustomSelect("fCombustible", c.combustible || "");
+  setCustomSelect("fPuertas", c.puertas || "");
 
   if (c.color) {
     const predefined = CAR_COLORS.find(col => col.hex.toLowerCase() === c.color.toLowerCase());

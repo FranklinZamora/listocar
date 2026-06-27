@@ -27,21 +27,37 @@ if (burger && navLinks) {
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* ---------- Chips de especificaciones ---------- */
-const gearSVG =
-  '<svg viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><path d="M5 7v10M12 7v4M12 12h7v4"/></svg>';
-const peopleSVG =
-  '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>';
-const acSVG =
-  '<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>';
-
 /* ---------- Catálogo ---------- */
 const carGrid = document.getElementById("carGrid");
+const filterBar = document.getElementById("filterBar");
+let allCars = [];
+let activeFilter = "Todos";
+
+function carSpecs(c) {
+  const items = [
+    c.transmision
+      ? `<span class="cspec"><i class="fa-solid fa-gears"></i>${esc(c.transmision)}</span>`
+      : "",
+    c.pasajeros
+      ? `<span class="cspec"><i class="fa-solid fa-user-group"></i>${esc(String(c.pasajeros))}</span>`
+      : "",
+    c.puertas
+      ? `<span class="cspec"><i class="fa-solid fa-door-open"></i>${esc(String(c.puertas))}</span>`
+      : "",
+    c.combustible
+      ? `<span class="cspec"><i class="fa-solid fa-gas-pump"></i>${esc(c.combustible)}</span>`
+      : "",
+    c.ac
+      ? `<span class="cspec ac"><i class="fa-solid fa-snowflake"></i>A/C</span>`
+      : "",
+  ].filter(Boolean);
+  return items.join("");
+}
 
 function renderCatalog(cars) {
   if (!cars.length) {
     carGrid.innerHTML =
-      '<div class="empty">Pronto agregaremos autos. ¡Escríbenos por WhatsApp!</div>';
+      '<div class="empty">No hay autos en esta categoría por ahora. ¡Escríbenos por WhatsApp!</div>';
     return;
   }
   carGrid.innerHTML = cars
@@ -53,30 +69,24 @@ function renderCatalog(cars) {
             ? [c.foto]
             : [FALLBACK_IMG];
       const mainFoto = fotos[0];
-      const chips = [
-        c.transmision
-          ? `<span class="spec-chip">${gearSVG}${esc(c.transmision)}</span>`
-          : "",
-        c.pasajeros
-          ? `<span class="spec-chip">${peopleSVG}${esc(String(c.pasajeros))} personas</span>`
-          : "",
-        c.ac ? `<span class="spec-chip ac">${acSVG}A/C</span>` : "",
-        c.color
-          ? `<span class="spec-chip"><span class="color-dot-sm" style="background:${safeHex(c.color)}"></span>${esc(colorName(c.color))}</span>`
-          : "",
-      ]
-        .filter(Boolean)
-        .join("");
+      const catBadge = c.categoria
+        ? `<span class="car-cat"><i class="${categoryIcon(c.categoria)}"></i>${esc(c.categoria)}</span>`
+        : "";
+      const colorTag = c.color
+        ? `<span class="car-color"><span class="color-dot-sm" style="background:${safeHex(c.color)}"></span>${esc(colorName(c.color))}</span>`
+        : "";
 
       return `
     <article class="car">
       <a href="detalle.html?id=${c.id}" class="car-img">
-        <img src="${esc(mainFoto)}" alt="${esc(c.nombre)}" loading="lazy" onerror="this.src='${FALLBACK_IMG}'">
+        <img src="${esc(mainFoto)}" alt="${esc(c.nombre)}" loading="lazy" data-fallback>
+        ${catBadge}
         <span class="car-year">${c.anio || ""}</span>
       </a>
       <div class="car-body">
         <a href="detalle.html?id=${c.id}" style="color:inherit"><h3>${esc(c.nombre)}</h3></a>
-        ${chips ? `<div class="car-chips">${chips}</div>` : ""}
+        <div class="car-specs">${carSpecs(c)}</div>
+        ${colorTag ? `<div class="car-color-row">${colorTag}</div>` : ""}
         <p class="car-desc">${esc(c.descripcion || "")}</p>
         <div class="car-price"><span class="amt">${money(c.precio)}</span><span class="per">/ día</span></div>
         <a class="btn" target="_blank" rel="noopener"
@@ -88,6 +98,48 @@ function renderCatalog(cars) {
     </article>`;
     })
     .join("");
+
+  carGrid.querySelectorAll("img[data-fallback]").forEach((img) => {
+    img.addEventListener("error", function () { this.src = FALLBACK_IMG; }, { once: true });
+  });
+}
+
+/* ---------- Filtros por categoría ---------- */
+function applyFilter() {
+  const cars =
+    activeFilter === "Todos"
+      ? allCars
+      : allCars.filter((c) => c.categoria === activeFilter);
+  renderCatalog(cars);
+}
+
+function renderFilters() {
+  if (!filterBar) return;
+  // Solo categorías presentes en los autos cargados, en el orden de CAR_CATEGORIES
+  const present = CAR_CATEGORIES.filter((cat) =>
+    allCars.some((c) => c.categoria === cat.name),
+  );
+  if (!present.length) {
+    filterBar.innerHTML = "";
+    return;
+  }
+  const btns = [
+    `<button class="filter-btn${activeFilter === "Todos" ? " active" : ""}" data-cat="Todos"><i class="fa-solid fa-layer-group"></i>Todos</button>`,
+    ...present.map(
+      (cat) =>
+        `<button class="filter-btn${activeFilter === cat.name ? " active" : ""}" data-cat="${esc(cat.name)}"><i class="${cat.icon}"></i>${esc(cat.name)}</button>`,
+    ),
+  ];
+  filterBar.innerHTML = btns.join("");
+  filterBar.querySelectorAll(".filter-btn").forEach((b) => {
+    b.addEventListener("click", () => {
+      activeFilter = b.dataset.cat;
+      filterBar
+        .querySelectorAll(".filter-btn")
+        .forEach((x) => x.classList.toggle("active", x === b));
+      applyFilter();
+    });
+  });
 }
 
 /* ---------- Carga desde Supabase ---------- */
@@ -98,9 +150,12 @@ async function loadCars() {
     .order("creado", { ascending: false });
   if (error) {
     console.error("[Listo Car] Supabase error:", error);
+    allCars = [];
     renderCatalog([]);
     return;
   }
-  renderCatalog(data || []);
+  allCars = data || [];
+  renderFilters();
+  applyFilter();
 }
 loadCars();

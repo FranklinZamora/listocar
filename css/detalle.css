@@ -136,6 +136,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,25,35,
 .info-chip i{font-size:.85em;color:var(--orange)}
 .info-chip.ac-yes{color:var(--green);border-color:rgba(61,220,132,.25)}
 .info-chip.ac-yes i{color:var(--green)}
+.info-chip.cat{background:rgba(244,123,32,.14);color:var(--orange);border-color:rgba(244,123,32,.35);text-transform:uppercase;font-weight:700;letter-spacing:.02em}
+.info-chip.cat i{color:var(--orange)}
 
 /* Precio */
 .info-price-wrap{padding:1.3rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:1.3rem 0 1.6rem}

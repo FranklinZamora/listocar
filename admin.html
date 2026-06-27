@@ -130,15 +130,28 @@
           </div>
 
           <!-- ESPECIFICACIONES -->
+          <div class="field">
+            <label>Categoría</label>
+            <div class="custom-select" data-for="fCategoria">
+              <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="cs-value placeholder"></span>
+                <svg class="cs-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="cs-menu" role="listbox"></div>
+              <input type="hidden" id="fCategoria">
+            </div>
+          </div>
           <div class="form-row">
             <div class="field">
               <label>Transmisión</label>
-              <select id="fTransmision">
-                <option value="">-- Selecciona --</option>
-                <option value="Automático">Automático</option>
-                <option value="Manual">Manual</option>
-                <option value="CVT">CVT</option>
-              </select>
+              <div class="custom-select" data-for="fTransmision">
+                <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="cs-value placeholder"></span>
+                  <svg class="cs-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="cs-menu" role="listbox"></div>
+                <input type="hidden" id="fTransmision">
+              </div>
             </div>
             <div class="field">
               <label>Pasajeros</label>
@@ -148,22 +161,25 @@
           <div class="form-row">
             <div class="field">
               <label>Combustible</label>
-              <select id="fCombustible">
-                <option value="">-- Selecciona --</option>
-                <option value="Gasolina">Gasolina</option>
-                <option value="Diésel">Diésel</option>
-                <option value="Híbrido">Híbrido</option>
-                <option value="Eléctrico">Eléctrico</option>
-              </select>
+              <div class="custom-select" data-for="fCombustible">
+                <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="cs-value placeholder"></span>
+                  <svg class="cs-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="cs-menu" role="listbox"></div>
+                <input type="hidden" id="fCombustible">
+              </div>
             </div>
             <div class="field">
               <label>Puertas</label>
-              <select id="fPuertas">
-                <option value="">-- Selecciona --</option>
-                <option value="2">2 puertas</option>
-                <option value="4">4 puertas</option>
-                <option value="5">5 puertas</option>
-              </select>
+              <div class="custom-select" data-for="fPuertas">
+                <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="cs-value placeholder"></span>
+                  <svg class="cs-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="cs-menu" role="listbox"></div>
+                <input type="hidden" id="fPuertas">
+              </div>
             </div>
           </div>
           <div class="field">
@@ -187,9 +203,15 @@
             </div>
             <input type="hidden" id="fColor">
           </div>
-          <label class="field-check">
-            <input type="checkbox" id="fAc">
-            <span>Aire acondicionado</span>
+          <label class="field-toggle">
+            <span class="ft-text">
+              <svg class="ft-ico" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+              Aire acondicionado
+            </span>
+            <span class="switch">
+              <input type="checkbox" id="fAc">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </span>
           </label>
 
           <!-- DESCRIPCIÓN -->

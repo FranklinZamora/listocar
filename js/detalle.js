@@ -31,18 +31,20 @@ function renderDetail(car){
 
   // Specs con iconos Font Awesome
   const specs = [
-    car.transmision ? { icon:'fa-solid fa-gears',       label:'Transmisión',  value:car.transmision                   } : null,
-    car.pasajeros   ? { icon:'fa-solid fa-user-group',  label:'Pasajeros',    value:car.pasajeros + ' personas'       } : null,
+    car.categoria   ? { icon:categoryIcon(car.categoria),  label:'Categoría',    value:esc(car.categoria)                } : null,
+    car.transmision ? { icon:'fa-solid fa-gears',       label:'Transmisión',  value:esc(car.transmision)              } : null,
+    car.pasajeros   ? { icon:'fa-solid fa-user-group',  label:'Pasajeros',    value:esc(String(car.pasajeros)) + ' personas' } : null,
     car.ac !== undefined ? { icon:'fa-solid fa-snowflake', label:'Aire acond.', value:car.ac?'Sí':'No', cls:car.ac?'yes':'no' } : null,
-    car.combustible ? { icon:'fa-solid fa-gas-pump',    label:'Combustible',  value:car.combustible                   } : null,
-    car.puertas     ? { icon:'fa-solid fa-door-open',   label:'Puertas',      value:car.puertas + ' puertas'          } : null,
+    car.combustible ? { icon:'fa-solid fa-gas-pump',    label:'Combustible',  value:esc(car.combustible)              } : null,
+    car.puertas     ? { icon:'fa-solid fa-door-open',   label:'Puertas',      value:esc(String(car.puertas)) + ' puertas' } : null,
     car.color       ? { icon:'fa-solid fa-palette', label:'Color', value:`<span class="spec-color-dot" style="background:${safeHex(car.color)}"></span>${esc(colorName(car.color))}`, cls:'has-dot' } : null,
   ].filter(Boolean);
 
-  // Chips rápidos en el panel (transmisión, pasajeros, A/C)
+  // Chips rápidos en el panel (categoría, transmisión, pasajeros, A/C)
   const chips = [
+    car.categoria   ? `<span class="info-chip cat"><i class="${categoryIcon(car.categoria)}"></i>${esc(car.categoria)}</span>` : '',
     car.transmision ? `<span class="info-chip"><i class="fa-solid fa-gears"></i>${esc(car.transmision)}</span>` : '',
-    car.pasajeros   ? `<span class="info-chip"><i class="fa-solid fa-user-group"></i>${car.pasajeros} personas</span>` : '',
+    car.pasajeros   ? `<span class="info-chip"><i class="fa-solid fa-user-group"></i>${esc(String(car.pasajeros))} personas</span>` : '',
     car.ac          ? `<span class="info-chip ac-yes"><i class="fa-solid fa-snowflake"></i>A/C</span>` : '',
   ].filter(Boolean).join('');
 
