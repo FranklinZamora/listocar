@@ -185,6 +185,9 @@ footer{background:#0a121a;padding:3rem 0 2rem;border-top:1px solid var(--line)}
 .foot-bottom{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;color:#5e7280;font-size:.8rem}
 .admin-dot{cursor:pointer;color:#2a3a48;user-select:none;font-size:.8rem;transition:color .2s}
 .admin-dot:hover{color:var(--orange)}
+.foot-credit{color:#5e7280;font-size:.8rem}
+.foot-credit a{color:var(--orange);font-weight:600;transition:color .2s}
+.foot-credit a:hover{color:var(--orange-d);text-decoration:underline}
 
 /* ---------- Stats ---------- */
 .stats{background:var(--dark-3);border-bottom:1px solid var(--line)}
