@@ -139,30 +139,30 @@ function initCustomSelect(id, options, placeholder) {
 }
 
 initCustomSelect("fCategoria", [
-  { value:"", label:"-- Selecciona --" },
+  { value:"", label:"Selecciona" },
   ...CAR_CATEGORIES.map(c => ({ value:c.name, label:c.name })),
-], "-- Selecciona --");
+], "Selecciona");
 
 initCustomSelect("fTransmision", [
-  { value:"", label:"-- Selecciona --" },
+  { value:"", label:"Selecciona" },
   { value:"Automático", label:"Automático" },
   { value:"Manual", label:"Manual" },
-], "-- Selecciona --");
+], "Selecciona");
 
 initCustomSelect("fCombustible", [
-  { value:"", label:"-- Selecciona --" },
+  { value:"", label:"Selecciona" },
   { value:"Gasolina", label:"Gasolina" },
   { value:"Diésel", label:"Diésel" },
   { value:"Híbrido", label:"Híbrido" },
   { value:"Eléctrico", label:"Eléctrico" },
-], "-- Selecciona --");
+], "Selecciona");
 
 initCustomSelect("fPuertas", [
-  { value:"", label:"-- Selecciona --" },
+  { value:"", label:"Selecciona" },
   { value:"2", label:"2 puertas" },
   { value:"4", label:"4 puertas" },
   { value:"5", label:"5 puertas" },
-], "-- Selecciona --");
+], "Selecciona");
 
 function setCustomSelect(id, val) { if (customSelects[id]) customSelects[id].setValue(val); }
 
