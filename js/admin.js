@@ -103,71 +103,105 @@ function isLightColor(hex) {
   return (r * 0.299 + g * 0.587 + b * 0.114) > 180;
 }
 
+function dotSpan(hex) {
+  const light = isLightColor(hex) ? " light" : "";
+  return `<span class="cdot${light}" style="background:${safeHex(hex)}"></span>`;
+}
+
 function initColorPicker() {
-  const grid        = document.getElementById("colorSwatches");
-  const customRow   = document.getElementById("colorCustomRow");
+  const wrap        = document.getElementById("colorSelect");
+  const trigger     = document.getElementById("colorTrigger");
+  const triggerCt   = document.getElementById("colorTriggerContent");
+  const menu        = document.getElementById("colorMenu");
+  const customPanel = document.getElementById("colorCustomPanel");
   const picker      = document.getElementById("fColorPicker");
+  const customSw    = document.getElementById("colorCustomSwatch");
   const customHex   = document.getElementById("colorCustomHex");
-  const previewBar  = document.getElementById("colorPreviewBar");
-  const previewSw   = document.getElementById("colorPreviewSwatch");
-  const previewName = document.getElementById("colorPreviewName");
-  const previewHex  = document.getElementById("colorPreviewHex");
+  const customApply = document.getElementById("colorCustomApply");
   const fColor      = document.getElementById("fColor");
-  const clearBtn    = document.getElementById("colorClearBtn");
-  let isCustom = false;
+
+  function openMenu() {
+    menu.classList.add("open");
+    trigger.classList.add("active");
+    trigger.setAttribute("aria-expanded", "true");
+  }
+  function closeMenu() {
+    menu.classList.remove("open");
+    trigger.classList.remove("active");
+    trigger.setAttribute("aria-expanded", "false");
+    customPanel.classList.remove("open");
+  }
+  function toggleMenu() {
+    menu.classList.contains("open") ? closeMenu() : openMenu();
+  }
+
+  function setTrigger(hex, name) {
+    if (!hex) {
+      triggerCt.innerHTML = '<span class="color-trigger-placeholder">Selecciona un color</span>';
+    } else {
+      triggerCt.innerHTML = `${dotSpan(hex)}<span class="color-trigger-name">${esc(name)}</span>`;
+    }
+  }
 
   function applyColor(hex, name, custom) {
-    isCustom = custom;
-    fColor.value = hex;
-    grid.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("selected"));
-    if (custom) {
-      grid.querySelector(".other-swatch").classList.add("selected");
-      customRow.style.display = "flex";
+    fColor.value = hex || "";
+    setTrigger(hex, name);
+    menu.querySelectorAll(".color-option").forEach(o => o.classList.remove("selected"));
+    if (!custom) {
+      const opt = menu.querySelector(`.color-option[data-hex="${hex}"]`);
+      if (opt) opt.classList.add("selected");
     } else {
-      const sw = grid.querySelector(`.color-swatch[data-hex="${hex}"]`);
-      if (sw) sw.classList.add("selected");
-      customRow.style.display = "none";
+      menu.querySelector(".color-option-other").classList.add("selected");
     }
-    previewBar.style.display = "flex";
-    previewSw.style.background = safeHex(hex);
-    previewName.textContent = name;
-    previewHex.textContent = hex.toUpperCase();
+    closeMenu();
   }
 
   function clearColor() {
-    isCustom = false;
     fColor.value = "";
-    grid.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("selected"));
-    customRow.style.display = "none";
-    previewBar.style.display = "none";
+    setTrigger(null);
+    menu.querySelectorAll(".color-option").forEach(o => o.classList.remove("selected"));
+    closeMenu();
   }
 
+  // Opciones predefinidas
   CAR_COLORS.forEach(c => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "color-swatch" + (isLightColor(c.hex) ? " light" : "");
-    btn.dataset.hex = c.hex;
-    btn.title = c.name;
-    btn.style.background = c.hex;
-    btn.addEventListener("click", () => applyColor(c.hex, c.name, false));
-    grid.appendChild(btn);
+    const opt = document.createElement("button");
+    opt.type = "button";
+    opt.className = "color-option";
+    opt.dataset.hex = c.hex;
+    opt.setAttribute("role", "option");
+    opt.innerHTML = `${dotSpan(c.hex)}<span class="color-option-name">${c.name}</span><svg class="color-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`;
+    opt.addEventListener("click", () => applyColor(c.hex, c.name, false));
+    menu.appendChild(opt);
   });
 
-  const otherBtn = document.createElement("button");
-  otherBtn.type = "button";
-  otherBtn.className = "color-swatch other-swatch";
-  otherBtn.title = "Otro color";
-  otherBtn.innerHTML = '<span class="other-icon">+</span>';
-  otherBtn.addEventListener("click", () => applyColor(picker.value, "Personalizado", true));
-  grid.appendChild(otherBtn);
+  // Opción "Otro color"
+  const other = document.createElement("button");
+  other.type = "button";
+  other.className = "color-option color-option-other";
+  other.setAttribute("role", "option");
+  other.innerHTML = `<span class="cdot cdot-rainbow"></span><span class="color-option-name">Otro color…</span><svg class="color-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`;
+  other.addEventListener("click", e => {
+    e.stopPropagation();
+    customPanel.classList.add("open");
+    customSw.style.background = picker.value;
+    customHex.textContent = picker.value.toUpperCase();
+  });
+  menu.appendChild(other);
+
+  trigger.addEventListener("click", toggleMenu);
 
   picker.addEventListener("input", () => {
-    const hex = picker.value;
-    customHex.textContent = hex.toUpperCase();
-    if (isCustom) applyColor(hex, "Personalizado", true);
+    customSw.style.background = picker.value;
+    customHex.textContent = picker.value.toUpperCase();
   });
 
-  clearBtn.addEventListener("click", clearColor);
+  customApply.addEventListener("click", () => applyColor(picker.value, picker.value.toUpperCase(), true));
+
+  // Cerrar al hacer clic fuera
+  document.addEventListener("click", e => {
+    if (!wrap.contains(e.target)) closeMenu();
+  });
 
   window._setColorPicker = applyColor;
   window._clearColorPicker = clearColor;
@@ -366,7 +400,8 @@ window.editCar = function(id) {
     } else {
       document.getElementById("fColorPicker").value = c.color;
       document.getElementById("colorCustomHex").textContent = c.color.toUpperCase();
-      window._setColorPicker(c.color, "Personalizado", true);
+      document.getElementById("colorCustomSwatch").style.background = c.color;
+      window._setColorPicker(c.color, c.color.toUpperCase(), true);
     }
   } else {
     window._clearColorPicker();

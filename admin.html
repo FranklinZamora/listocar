@@ -168,20 +168,21 @@
           </div>
           <div class="field">
             <label>Color</label>
-            <div class="color-picker-wrap">
-              <div class="color-swatches-grid" id="colorSwatches"></div>
-              <div class="color-custom-row" id="colorCustomRow">
-                <input type="color" id="fColorPicker" value="#888888">
-                <span class="color-custom-label">Color personalizado:</span>
+            <div class="color-select" id="colorSelect">
+              <button type="button" class="color-select-trigger" id="colorTrigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="color-trigger-content" id="colorTriggerContent">
+                  <span class="color-trigger-placeholder">Selecciona un color</span>
+                </span>
+                <svg class="color-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <div class="color-menu" id="colorMenu" role="listbox"></div>
+              <div class="color-custom-panel" id="colorCustomPanel">
+                <label class="color-custom-pick" for="fColorPicker">
+                  <input type="color" id="fColorPicker" value="#888888">
+                  <span class="color-custom-swatch" id="colorCustomSwatch"></span>
+                </label>
                 <span class="color-custom-hex" id="colorCustomHex">#888888</span>
-              </div>
-              <div class="color-preview-bar" id="colorPreviewBar">
-                <div class="color-preview-swatch" id="colorPreviewSwatch"></div>
-                <div class="color-preview-text">
-                  <span class="color-preview-name" id="colorPreviewName"></span>
-                  <span class="color-preview-hex" id="colorPreviewHex"></span>
-                </div>
-                <button type="button" class="color-clear" id="colorClearBtn" title="Quitar color">✕</button>
+                <button type="button" class="btn color-custom-apply" id="colorCustomApply">Usar este color</button>
               </div>
             </div>
             <input type="hidden" id="fColor">
