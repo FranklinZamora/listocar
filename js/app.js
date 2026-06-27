@@ -34,6 +34,8 @@ const peopleSVG =
   '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>';
 const acSVG =
   '<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>';
+const colorSVG =
+  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 010 20"/></svg>';
 
 /* ---------- Catálogo ---------- */
 const carGrid = document.getElementById("carGrid");
@@ -55,12 +57,15 @@ function renderCatalog(cars) {
       const mainFoto = fotos[0];
       const chips = [
         c.transmision
-          ? `<span class="spec-chip">${gearSVG}${c.transmision}</span>`
+          ? `<span class="spec-chip">${gearSVG}${esc(c.transmision)}</span>`
           : "",
         c.pasajeros
-          ? `<span class="spec-chip">${peopleSVG}${c.pasajeros} personas</span>`
+          ? `<span class="spec-chip">${peopleSVG}${esc(String(c.pasajeros))} personas</span>`
           : "",
         c.ac ? `<span class="spec-chip ac">${acSVG}A/C</span>` : "",
+        c.color
+          ? `<span class="spec-chip">${colorSVG}${esc(c.color)}</span>`
+          : "",
       ]
         .filter(Boolean)
         .join("");

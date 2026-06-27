@@ -190,7 +190,8 @@ document.getElementById("carForm").addEventListener("submit", async e => {
     pasajeros:   Number(document.getElementById("fPasajeros").value) || null,
     combustible: document.getElementById("fCombustible").value || null,
     puertas:     Number(document.getElementById("fPuertas").value) || null,
-    ac:          document.getElementById("fAc").checked
+    ac:          document.getElementById("fAc").checked,
+    color:       document.getElementById("fColor").value.trim() || null
   };
   Object.keys(car).forEach(k => car[k] === null && delete car[k]);
 
@@ -275,6 +276,7 @@ window.editCar = function(id) {
   document.getElementById("fCombustible").value  = c.combustible || "";
   document.getElementById("fPuertas").value      = c.puertas || "";
   document.getElementById("fAc").checked         = !!c.ac;
+  document.getElementById("fColor").value        = c.color || "";
 
   const existingFotos = c.fotos && c.fotos.length ? c.fotos : (c.foto ? [c.foto] : []);
   [0,1,2].forEach(slot => {
